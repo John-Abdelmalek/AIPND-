@@ -1,0 +1,36 @@
+This is the final project for Udacity's AI programming with Python nanodegree.
+
+Goal:
+    To train an image classifier to correctly identify 102 classes of flowers. I used a pretrained model from torchvision.models to get image features,
+    built and trained a new feed-forward classifier using those images' features.
+    Acceptable accuracy for the trained models is around 70% (and the higher the better).
+
+Files:
+Image Classifier Project.html : HTML file of the notebook of the project.
+
+Image Classifier Project.ipynb: notebook of the project.
+
+train.py:  To train the model.
+    Input:
+        Basic usage: 
+            python train.py data_directory
+            
+        Optional usage in addition to basic:
+            --save_dir data_directory
+            --arch "densenet121"
+            --learning_rate 0.001
+            --hidden_units 512
+            --epochs 7
+
+predict.py :  To use the model to make predictions, after having been trained.
+    Input: 
+        Basic usage: 
+            python predict.py /path/to/image checkpoint  
+            
+        Optional usage in addition to basic:
+            --top_k 5
+            --gpu
+            category_names cat_to_name.json
+            
+utility.py: Contains the process_image and load_checkpoint functions.
+            
