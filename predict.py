@@ -13,8 +13,9 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description= 'Parsing input to get image path, cat. mapping, top K classes, gpu')
     parser.add_argument('imagepath', default='flowers/test/15/image_06351.jpg')
     #The default checkpoint I used below is checkpoint.pth from first part of the project, based on instructions in
-    #Part 2, to test with the checkpoint from part 1. I called the checkpoint generated from part 2 checkpnt.pth, 
-    #and the checkpoint from part 1 checkpoint.pth .
+    #Part 2, to test with the checkpoint from part 1. I named the checkpoint generated from part 2 checkpnt.pth, 
+    #and the checkpoint from part 1 checkpoint.pth . I tested both checkpoints, the one generated in part 1, and the
+    #one generated in part 2, and both function correctly, give correct / proper predictions.
     parser.add_argument('checkpoint', action='store', default='checkpoint.pth') 
     parser.add_argument('--top_k', dest='top_k', default='5', type=int)
     parser.add_argument('--category_names', dest='category_names', default='cat_to_name.json')
@@ -37,9 +38,7 @@ def predict(image_path, model, topk=5, gpu='gpu'):
     '''
 
     # TODO: Implement the code to predict the class from an image file
-    #from this course content
-    #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    #model.to(device)
+  
     if gpu == 'gpu'and torch.cuda.is_available(): 
         model = model.to('cuda')
     else:
@@ -50,17 +49,17 @@ def predict(image_path, model, topk=5, gpu='gpu'):
  
     with torch.no_grad():
         
-        #image = image.to(device)
         if gpu == 'gpu'and torch.cuda.is_available(): 
             image = image.to('cuda')
         else:
             image = image.to('cpu')
-                          #model.to('cuda:0')
-                               #images, labels = images.to('cuda'), labels.to('cuda')            
+                          
+        #from mentor's advice
+        model.eval()
+        
         log_ps = model.forward(image)
         ps = torch.exp(log_ps)
         probabilities, indices = ps.topk(topk)
-        #probabilities, indices = probabilities.to(device), indices.to(device)
         if gpu == 'gpu' and torch.cuda.is_available():
             probabilities, indices = probabilities.to('cuda'), indices.to('cuda')
         else:

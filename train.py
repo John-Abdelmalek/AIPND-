@@ -40,17 +40,10 @@ def training(model, epochs, optimizer, criterion, trainloader, validloader, gpu)
         counter = 0
         running_loss = 0
         print_interval = 5
-        
-        #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        #if gpu == 'gpu'and torch.cuda.is_available(): 
-            #model.to('cuda:0')
-        #else:
-            #model.to('cpu')
-
+    
         for epoch in range(epochs):
             for images, labels in trainloader:
                 counter += 1
-               #images, labels = images.to(device), labels.to(device)
                 if gpu == 'gpu'and torch.cuda.is_available(): 
                     images, labels = images.to('cuda'), labels.to('cuda')
                 else:
@@ -71,7 +64,6 @@ def training(model, epochs, optimizer, criterion, trainloader, validloader, gpu)
             
                     with torch.no_grad():
                         for images, labels in validloader:
-                            #images, labels = images.to(device), labels.to(device)
                             if gpu == 'gpu' and torch.cuda.is_available(): 
                                 images, labels = images.to('cuda'), labels.to('cuda')
                             else:
@@ -92,6 +84,8 @@ def training(model, epochs, optimizer, criterion, trainloader, validloader, gpu)
                           f"Validation accuracy: {valid_accuracy/len(validloader):.3f}")
                     running_loss = 0
                     model.train()
+    return model             
+     
 
 def save_checkpoint(model, PATH, optimizer, classifier, args):
     
@@ -154,10 +148,7 @@ def main():
 
     testloader = torch.utils.data.DataLoader(test_data, batch_size=64)
     
-    #from this course's content
-    #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-   #if gpu == 'gpu'and torch.cuda.is_available(): 
-       #model.to('cuda')
+    
     model = getattr(models, args.arch)(pretrained=True)
 
     for parameter in model.parameters():
@@ -187,13 +178,10 @@ def main():
     criterion = nn.NLLLoss()
     optimizer = optim.Adam(model.classifier.parameters(), lr=args.learning_rate)
 
-    #model.to(device)
-   #if gpu == 'gpu'and torch.cuda.is_available(): 
-       #model.to('cuda')
     epochs = args.epochs
     gpu = args.gpu
 
-    training(model, epochs, optimizer, criterion, trainloader, validloader, gpu)
+    model = training(model, epochs, optimizer, criterion, trainloader, validloader, gpu)
 
     PATH = args.save_dir
     model.class_to_idx = train_data.class_to_idx
